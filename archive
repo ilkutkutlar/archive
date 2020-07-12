@@ -12,7 +12,7 @@ main() {
     -l | --list) list ;;
     -h | --help) help ;;
     -v | --version) usage ;;
-    '*') usage ;;
+    *) help ;;
   esac
 }
 
@@ -31,13 +31,11 @@ add() {
     tar -r "${filename}" -f "${ARCHIVE_TAR}"
   fi
 
-  if [ $? ]; then
+  if [ "$?" ]; then
     echo "${filename} added to archive"
   else
     echo "Adding to archive failed"
   fi
-
-  return $?
 }
 
 list() {
