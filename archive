@@ -1,0 +1,73 @@
+#!/bin/sh
+
+readonly ARCHIVE_TAR="archive.tar"
+
+main() {
+  option="$1"
+  argument="$2"
+
+  case "${option}" in
+    -a | --add) add "${argument}" 0 ;;
+    -m | --move) add "${argument}" 1 ;;
+    -l | --list) list ;;
+    -h | --help) help ;;
+    -v | --version) usage ;;
+    '*') usage ;;
+  esac
+}
+
+add() {
+  filename="$1"
+  remove_files="$2"
+
+  if [ ! -e "${filename}" ]; then
+    echo "No such file: ${filename}"
+    return 1
+  fi
+
+  if [ "${remove_files}" -eq 1 ]; then
+    tar -r "${filename}" -f "${ARCHIVE_TAR}" --remove-files
+  else
+    tar -r "${filename}" -f "${ARCHIVE_TAR}"
+  fi
+
+  if [ $? ]; then
+    echo "${filename} added to archive"
+  else
+    echo "Adding to archive failed"
+  fi
+
+  return $?
+}
+
+list() {
+  if [ -e "${ARCHIVE_TAR}" ]; then
+    echo "Files in archive: "
+    tar -t -f "${ARCHIVE_TAR}"
+  else
+    echo "No archive file in current directory"
+  fi
+}
+
+usage() {
+  cat << EOF 
+Usage: $0 [option] [file]
+v0.0.1 - Ilkut Kutlar - July 2020
+EOF
+}
+
+help() {
+  usage
+
+  echo ""
+  
+  cat << EOF
+  -a, --add       add file to archive of current directory
+  -m, --move      add file to archive and remove it
+  -l, --list      list the files in current directory archive
+  -v, --version   print version and exit
+  -h, --help      print this help and exit
+EOF
+}
+
+main "$@"
