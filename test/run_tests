@@ -9,12 +9,15 @@ is_installed() {
 
 if is_installed "shellcheck"; then
   echo "Running shellcheck..."
+
   shellcheck --shell=sh \
     "${PROJECT_ROOT}"/bin/* \
     "${PROJECT_ROOT}"/lib/*
-  
-  if [ "$?" ]; then
+
+  if [ $? -eq 0 ]; then
     echo "shellcheck passed"
+  else
+    exit 1
   fi
 else
   echo "Skipping shellcheck test: shellcheck utility not found in PATH."

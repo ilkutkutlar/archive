@@ -2,7 +2,9 @@ readonly ARCHIVE_TAR=".archive.tar"
 
 add() {
   filename="$1"
-  remove_files="$2"
+  root_dir="$2"   # add file to this dir's archive
+  remove_files="$3"
+  
 
   if [ ! -e "${filename}" ]; then
     echo "No such file: ${filename}"
@@ -10,9 +12,9 @@ add() {
   fi
 
   if [ "${remove_files}" -eq 1 ]; then
-    tar -r "${filename}" -f "${ARCHIVE_TAR}" --remove-files
+    tar -r "${filename}" -f "${root_dir}/${ARCHIVE_TAR}" --remove-files
   else
-    tar -r "${filename}" -f "${ARCHIVE_TAR}"
+    tar -r "${filename}" -f "${root_dir}/${ARCHIVE_TAR}"
   fi
 
   if [ "$?" ]; then

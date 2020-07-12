@@ -1,14 +1,17 @@
 #!/bin/sh
 
-. ../lib/archive.sh
+readonly PROJECT_ROOT="$(dirname "$0")/.."
+
+# shellcheck source=lib/archive.sh
+. "${PROJECT_ROOT}"/lib/archive.sh
 
 main() {
   option="$1"
   argument="$2"
 
   case "${option}" in
-    -a | --add) add "${argument}" 0 ;;
-    -m | --move) add "${argument}" 1 ;;
+    -a | --add) add "${argument}" "." 0 ;;
+    -m | --move) add "${argument}" "." 1 ;;
     -l | --list) list ;;
     -h | --help) help ;;
     -v | --version) usage ;;
