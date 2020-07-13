@@ -1,20 +1,22 @@
 readonly ARCHIVE_TAR=".archive.tar"
 
+# $1: file to archive
+# $2: remove file after adding to archive, 1 or 0
+# $3: optional: add file to custom archive, defaults to ./$ARCHIVE_TAR
 add() {
   filename="$1"
-  root_dir="$2"   # add file to this dir's archive
-  remove_files="$3"
+  remove_files="$2"
+  archive=${3-"./${ARCHIVE_TAR}"}
   
-
   if [ ! -e "${filename}" ]; then
     echo "No such file: ${filename}"
     return 1
   fi
 
   if [ "${remove_files}" -eq 1 ]; then
-    tar -r "${filename}" -f "${root_dir}/${ARCHIVE_TAR}" --remove-files
+    tar -r "${filename}" -f "${archive}" --remove-files
   else
-    tar -r "${filename}" -f "${root_dir}/${ARCHIVE_TAR}"
+    tar -r "${filename}" -f "${archive}"
   fi
 
   if [ "$?" ]; then
@@ -24,10 +26,13 @@ add() {
   fi
 }
 
+# $1: optional: list custom archive, defaults to ./$ARCHIVE_TAR
 list() {
-  if [ -e "${ARCHIVE_TAR}" ]; then
-    echo "Files in archive: "
-    tar -t -f "${ARCHIVE_TAR}"
+  archive=${1-"./${ARCHIVE_TAR}"}
+  
+  if [ -e "${archive}" ]; then
+    echo "Files in archive:"
+    tar -t -f "${archive}"
   else
     echo "No archive file in current directory"
   fi
