@@ -2,8 +2,14 @@
 
 readonly PROJECT_ROOT="$(dirname "$0")/.."
 
+# shellcheck source=lib/defaults.sh
+. "${PROJECT_ROOT}"/lib/defaults.sh
+
 # shellcheck source=lib/archive.sh
 . "${PROJECT_ROOT}"/lib/archive.sh
+
+# shellcheck source=lib/info.sh
+. "${PROJECT_ROOT}"/lib/info.sh
 
 main() {
   option="$1"

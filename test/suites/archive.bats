@@ -1,21 +1,21 @@
 #!/usr/bin/env bats
 
+load test_helper
+
 function setup() {
-  export PROJECT_ROOT="${BATS_TEST_DIRNAME}/../.."
+  define_paths
+  source "${PROJECT_ROOT}/lib/defaults.sh"
   source "${PROJECT_ROOT}/lib/archive.sh"
 
-  export FIXTURES_DIR="${PROJECT_ROOT}/test/fixtures"
+  export TEST_ARCHIVE_TAR="${BATS_TMPDIR}/${ARCHIVE_TAR}"
 }
 
-function print_test_debug_info() {
-  echo "Actual: ${actual}"
-  echo "Expected: ${expected}"
+function remove_old_test_archive() {
+  rm -f "${TEST_ARCHIVE_TAR}"
 }
 
 @test "archiving file" {
-  TEST_ARCHIVE_TAR="${BATS_TMPDIR}/${ARCHIVE_TAR}"
-  rm -f "${TEST_ARCHIVE_TAR}"
-
+  remove_old_test_archive
   TEST_FILE="${BATS_TMPDIR}/test.txt"
   touch "${TEST_FILE}"
 
@@ -29,9 +29,7 @@ function print_test_debug_info() {
 }
 
 @test "archiving directory" {
-  TEST_ARCHIVE_TAR="${BATS_TMPDIR}/${ARCHIVE_TAR}"
-  rm -f "${TEST_ARCHIVE_TAR}"
-
+  remove_old_test_archive
   TEST_DIR="${BATS_TMPDIR}/test_dir"
   mkdir -p "${TEST_DIR}"
   touch "${TEST_DIR}/test1.txt"
@@ -47,9 +45,7 @@ $( basename ${BATS_TMPDIR} )/test_dir/test1.txt"
 }
 
 @test "moving file - archiving and removing" {
-  TEST_ARCHIVE_TAR="${BATS_TMPDIR}/${ARCHIVE_TAR}"
-  rm -f "${TEST_ARCHIVE_TAR}"
-
+  remove_old_test_archive
   TEST_FILE="${BATS_TMPDIR}/test.txt"
   touch "${TEST_FILE}"
 
@@ -63,9 +59,7 @@ $( basename ${BATS_TMPDIR} )/test_dir/test1.txt"
 }
 
 @test "moving directory - archiving and removing" {
-  TEST_ARCHIVE_TAR="${BATS_TMPDIR}/${ARCHIVE_TAR}"
-  rm -f "${TEST_ARCHIVE_TAR}"
-
+  remove_old_test_archive
   TEST_DIR="${BATS_TMPDIR}/test_dir"
   mkdir -p "${TEST_DIR}"
   touch "${TEST_DIR}/test1.txt"
@@ -80,12 +74,21 @@ $( basename ${BATS_TMPDIR} )/test_dir/test1.txt"
   [ "${actual}" = "${expected}" ] && [ ! -d ${TEST_DIR} ]
 }
 
-@test "listing files in archive" {
-  local actual="$( list "${FIXTURES_DIR}/list_test_archive.tar" )"
-  local expected="Files in archive:
-test.txt
-test_dir/
-test_dir/test1.txt"
+@test "unarchiving file from archive" {
+  rm -rf "${FIXTURES_DIR}/test_dir"
+  unarchive "test_dir" "${FIXTURES_DIR}/list_test_archive.tar"
+  [ -d "${FIXTURES_DIR}/test_dir" ] && [ -f "${FIXTURES_DIR}/test_dir/test1.txt" ]
+}
+
+@test "removing file from archive" {
+  TEST_TAR="${FIXTURES_DIR}/remove_test_archive.tar"
+  rm -f "${TEST_TAR}"
+  
+  cp "${FIXTURES_DIR}/list_test_archive.tar" "${TEST_TAR}"
+  remove_from_archive "test_dir" "${TEST_TAR}"
+
+  local actual="$( tar -tf "${TEST_TAR}" )"
+  local expected="test.txt"
   print_test_debug_info
 
   [ "${actual}" = "${expected}" ]

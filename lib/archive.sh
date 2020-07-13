@@ -1,5 +1,3 @@
-readonly ARCHIVE_TAR=".archive.tar"
-
 # $1: file to archive
 # $2: remove file after adding to archive, 1 or 0
 # $3: optional: add file to custom archive, defaults to ./$ARCHIVE_TAR
@@ -23,18 +21,6 @@ add() {
     echo "${filename} added to archive"
   else
     echo "Adding to archive failed"
-  fi
-}
-
-# $1: optional: list custom archive, defaults to ./$ARCHIVE_TAR
-list() {
-  archive=${1-"./${ARCHIVE_TAR}"}
-  
-  if [ -e "${archive}" ]; then
-    echo "Files in archive:"
-    tar -t -f "${archive}"
-  else
-    echo "No archive file in current directory"
   fi
 }
 
