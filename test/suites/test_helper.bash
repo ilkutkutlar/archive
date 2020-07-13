@@ -4,6 +4,6 @@ function define_paths() {
 }
 
 function print_test_debug_info() {
-  echo "Actual: ${actual}"
-  echo "Expected: ${expected}"
+  echo "Actual: $1"
+  echo "Expected: $2"
 }

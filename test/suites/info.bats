@@ -14,7 +14,7 @@ function setup() {
 test.txt
 test_dir/
 test_dir/test1.txt"
-  print_test_debug_info
+  print_test_debug_info "${actual}" "${expected}"
 
   [ "${actual}" = "${expected}" ]
 }
@@ -24,7 +24,7 @@ test_dir/test1.txt"
   local expected="Top-level files in archive:
 test.txt
 test_dir/"
-  print_test_debug_info
+  print_test_debug_info "${actual}" "${expected}"
 
   [ "${actual}" = "${expected}" ]
 }

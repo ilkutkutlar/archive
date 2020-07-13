@@ -23,7 +23,7 @@ function remove_old_test_archive() {
   
   local actual="$( tar -tf "${TEST_ARCHIVE_TAR}" )"
   local expected="$( basename ${BATS_TMPDIR} )/test.txt"
-  print_test_debug_info
+  print_test_debug_info "${actual}" "${expected}"
 
   [ "${actual}" = "${expected}" ] && [ -f ${TEST_FILE} ]
 }
@@ -39,7 +39,7 @@ function remove_old_test_archive() {
   local actual="$( tar -tf "${TEST_ARCHIVE_TAR}" )"
   local expected="$( basename ${BATS_TMPDIR} )/test_dir/
 $( basename ${BATS_TMPDIR} )/test_dir/test1.txt"
-  print_test_debug_info
+  print_test_debug_info "${actual}" "${expected}"
 
   [ "${actual}" = "${expected}" ] && [ -d ${TEST_DIR} ]
 }
@@ -53,7 +53,7 @@ $( basename ${BATS_TMPDIR} )/test_dir/test1.txt"
   
   local actual="$( tar -tf "${TEST_ARCHIVE_TAR}" )"
   local expected="$( basename ${BATS_TMPDIR} )/test.txt"
-  print_test_debug_info
+  print_test_debug_info "${actual}" "${expected}"
 
   [ "${actual}" = "${expected}" ] && [ ! -f ${TEST_FILE} ]
 }
@@ -69,7 +69,7 @@ $( basename ${BATS_TMPDIR} )/test_dir/test1.txt"
   local actual="$( tar -tf "${TEST_ARCHIVE_TAR}" )"
   local expected="$( basename ${BATS_TMPDIR} )/test_dir/
 $( basename ${BATS_TMPDIR} )/test_dir/test1.txt"
-  print_test_debug_info
+  print_test_debug_info "${actual}" "${expected}"
 
   [ "${actual}" = "${expected}" ] && [ ! -d ${TEST_DIR} ]
 }
@@ -89,7 +89,7 @@ $( basename ${BATS_TMPDIR} )/test_dir/test1.txt"
 
   local actual="$( tar -tf "${TEST_TAR}" )"
   local expected="test.txt"
-  print_test_debug_info
+  print_test_debug_info "${actual}" "${expected}"
 
   [ "${actual}" = "${expected}" ]
 }
