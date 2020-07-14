@@ -7,9 +7,9 @@ function setup() {
   source "${PROJECT_ROOT}/lib/defaults.sh"
   source "${PROJECT_ROOT}/lib/archive.sh"
 
-  TEST_ARCHIVE_TAR="${BATS_TMPDIR}/${ARCHIVE_TAR}"
-  TEST_FILE="${BATS_TMPDIR}/test.txt"
-  TEST_DIR="${BATS_TMPDIR}/test_dir"
+  readonly TEST_ARCHIVE_TAR="${BATS_TMPDIR}/${ARCHIVE_TAR}"
+  readonly TEST_FILE="${BATS_TMPDIR}/test.txt"
+  readonly TEST_DIR="${BATS_TMPDIR}/test_dir"
 }
 
 function remove_old_test_archive() {
@@ -26,8 +26,8 @@ function create_test_files() {
   remove_old_test_archive
   create_test_files
 
-  output_1="$( add "${TEST_FILE}" 0 "${TEST_ARCHIVE_TAR}" )"
-  output_2="$( add "${TEST_DIR}" 0 "${TEST_ARCHIVE_TAR}" )"
+  output_1="$( add_to_archive "${TEST_FILE}" 0 "${TEST_ARCHIVE_TAR}" )"
+  output_2="$( add_to_archive "${TEST_DIR}" 0 "${TEST_ARCHIVE_TAR}" )"
   
   local actual_contents="$( tar -tf "${TEST_ARCHIVE_TAR}" )"
   local expected_contents="$( basename ${BATS_TMPDIR} )/test.txt
@@ -47,8 +47,8 @@ $( basename ${BATS_TMPDIR} )/test_dir/test1.txt"
   remove_old_test_archive
   create_test_files
 
-  output_1="$( add "${TEST_FILE}" 1 "${TEST_ARCHIVE_TAR}" )"
-  output_2="$( add "${TEST_DIR}" 1 "${TEST_ARCHIVE_TAR}" )"
+  output_1="$( add_to_archive "${TEST_FILE}" 1 "${TEST_ARCHIVE_TAR}" )"
+  output_2="$( add_to_archive "${TEST_DIR}" 1 "${TEST_ARCHIVE_TAR}" )"
   
   local actual="$( tar -tf "${TEST_ARCHIVE_TAR}" )"
   local expected="$( basename ${BATS_TMPDIR} )/test.txt
@@ -64,23 +64,35 @@ $( basename ${BATS_TMPDIR} )/test_dir/test1.txt"
 
 @test "unarchiving files from archive" {
   rm -rf "${FIXTURES_DIR}/test_dir"
-  output="$( unarchive "test_dir" "${FIXTURES_DIR}/list_test_archive.tar" )"
 
-  [ "${output}" = "Retrieved ${test_dir} from archive" ]
+  output="$( unarchive "test_dir" 0 "${FIXTURES_DIR}/dummy_archive.tar" )"
+
+  local actual_contents="$( tar -tf "${FIXTURES_DIR}/dummy_archive.tar" )"
+  local expected_contents="test.txt
+test_dir/
+test_dir/test1.txt"
+
+  [ "${output}" = "Retrieved test_dir from archive" ]
+  [ "${actual_contents}" = "${expected_contents}" ]
   [ -f "${FIXTURES_DIR}/test_dir/test1.txt" ]
   [ -d "${FIXTURES_DIR}/test_dir" ]
 }
 
-@test "removing files from archive" {
-  TEST_TAR="${FIXTURES_DIR}/remove_test_archive.tar"
-  rm -f "${TEST_TAR}"
-  
-  cp "${FIXTURES_DIR}/list_test_archive.tar" "${TEST_TAR}"
-  output="$( remove_from_archive "test_dir" "${TEST_TAR}" )"
 
-  local actual="$( tar -tf "${TEST_TAR}" )"
-  local expected="test.txt"
+@test "unarchiving files followed by removing from archive" {
+  remove_old_test_archive
+  rm -rf "${BATS_TMPDIR}/test_dir"
+  cp "${FIXTURES_DIR}/dummy_archive.tar" "${TEST_ARCHIVE_TAR}"
 
-  [ "${output}" = "Remove ${test_dir} from archive permanently" ]
-  [ "${actual}" = "${expected}" ]
+  local output="$( unarchive "test_dir" 1 "${TEST_ARCHIVE_TAR}" )"
+  local expected_output="Retrieved test_dir from archive
+Deleted test_dir from archive permanently"
+
+  local actual_contents="$( tar -tf "${TEST_ARCHIVE_TAR}" )"
+  local expected_contents="test.txt"
+
+  [ "${output}" = "${expected_output}" ]
+  [ "${actual_contents}" = "${expected_contents}" ]
+  [ -f "${BATS_TMPDIR}/test_dir/test1.txt" ]
+  [ -d "${BATS_TMPDIR}/test_dir" ]
 }
