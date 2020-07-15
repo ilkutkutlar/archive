@@ -1,31 +1,29 @@
 #!/bin/sh
 
+set -e
+
 readonly PROJECT_ROOT="$(dirname "$0")/.."
 
 # shellcheck source=lib/defaults.sh
-. "${PROJECT_ROOT}"/lib/defaults.sh
+. "${PROJECT_ROOT}/lib/defaults.sh"
 
 # shellcheck source=lib/archive.sh
-. "${PROJECT_ROOT}"/lib/archive.sh
+. "${PROJECT_ROOT}/lib/archive.sh"
 
 # shellcheck source=lib/info.sh
-. "${PROJECT_ROOT}"/lib/info.sh
+. "${PROJECT_ROOT}/lib/info.sh"
 
 # shellcheck source=lib/help.sh
-. "${PROJECT_ROOT}"/lib/help.sh
+. "${PROJECT_ROOT}/lib/help.sh"
 
-main() {
-  option="$1"
-  argument="$2"
-
-  case "${option}" in
-    -a | --add) add_to_archive "${argument}" "." 0 ;;
-    -m | --move) add_to_archive "${argument}" "." 1 ;;
-    -l | --list) list "." ;;
-    -h | --help) help ;;
-    -v | --version) usage ;;
+while getopts 'a:m:lhv' opt; do
+  case "${opt}" in
+    a) add_to_archive "${OPTARG}" 0 ;;
+    m) add_to_archive "${OPTARG}" 1 ;;
+    l) # shellcheck disable=SC2119
+       list ;;
+    h) help ;;
+    v) usage ;;
     *) help ;;
   esac
-}
-
-main "$@"
+done
