@@ -7,8 +7,8 @@ readonly PROJECT_ROOT="$(dirname "$0")/.."
 # shellcheck source=lib/defaults.sh
 . "${PROJECT_ROOT}/lib/defaults.sh"
 
-# shellcheck source=lib/archive.sh
-. "${PROJECT_ROOT}/lib/archive.sh"
+# shellcheck source=lib/manage_archive.sh
+. "${PROJECT_ROOT}/lib/manage_archive.sh"
 
 # shellcheck source=lib/info.sh
 . "${PROJECT_ROOT}/lib/info.sh"
@@ -16,14 +16,48 @@ readonly PROJECT_ROOT="$(dirname "$0")/.."
 # shellcheck source=lib/help.sh
 . "${PROJECT_ROOT}/lib/help.sh"
 
-while getopts 'a:m:lhv' opt; do
+action=""
+file=""
+remove_files=0
+
+set_action() {
+  if [ -z "${action}" ]; then
+    action="$1"
+  else
+    echo "Incorrect combination of options given"
+    echo
+    usage
+    exit 1
+  fi
+}
+
+while getopts 'a:dlhv' opt; do
   case "${opt}" in
-    a) add_to_archive "${OPTARG}" 0 ;;
-    m) add_to_archive "${OPTARG}" 1 ;;
-    l) # shellcheck disable=SC2119
-       list ;;
-    h) help ;;
-    v) usage ;;
-    *) help ;;
+    a) 
+      set_action add
+      file="${OPTARG}" 
+      ;;
+    d) remove_files=1 ;;
+    l) set_action list ;;
+    h) set_action help ;;
+    v) set_action usage ;;
+    *) set_action help ;;
   esac
 done
+
+case "${action}" in
+  add) 
+    if [ -z "${file}" ]; then
+      echo "No file argument given"
+      exit 1
+    fi
+
+    add_to_archive "${file}" "${remove_files}" 
+    ;;
+  list) 
+    # shellcheck disable=SC2119
+    list 
+    ;;
+  help) help ;;
+  usage) usage ;;
+esac

@@ -1,5 +1,7 @@
 usage() {
-  echo "Usage: $0 [option] [file]"
+  echo "Usage:"
+  echo "  $(basename "$0") -a [-d] file"
+  echo "  $(basename "$0") {-l|-v|-h}"
   echo "v0.0.1 - Ilkut Kutlar - July 2020"
 }
 
@@ -7,9 +9,9 @@ help() {
   usage
   
   echo
-  echo '  -a, --add       add file to archive of current directory'
-  echo '  -m, --move      add file to archive and remove it'
-  echo '  -l, --list      list the files in current directory archive'
-  echo '  -v, --version   print version and exit'
-  echo '  -h, --help      print this help and exit'
+  echo '  -a    add file to archive of current directory'
+  echo '  -m    add file to archive and remove it'
+  echo '  -l    list the files in current directory archive'
+  echo '  -v    print version and exit'
+  echo '  -h    print this help and exit'
 }
