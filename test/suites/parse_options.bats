@@ -167,22 +167,18 @@ function setup() {
   # Use run so that test doesn't fail due to
   # parse_options returning 1
   run parse_options -l -v
-
   [ "${lines[0]}" = "Incorrect set of options given" ]
   [ "${status}" -eq 1 ]
 
   run parse_options --list --version
-
   [ "${status}" -eq 1 ]
   [ "${lines[0]}" = "Incorrect set of options given" ]
 
   run parse_options -q
-
   [ "${status}" -eq 1 ]
   [ -z "${output}" ]
 
   run parse_options --quiet
-
   [ "${status}" -eq 1 ]
   [ -z "${output}" ]
 }
