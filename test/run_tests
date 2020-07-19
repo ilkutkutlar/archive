@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 readonly PROJECT_ROOT="$(dirname "$0")/.."
 
@@ -14,9 +14,12 @@ if is_installed "shellcheck"; then
              --source-path="${PROJECT_ROOT}" \
              --enable=require-variable-braces \
              --enable=add-default-case \
-             "${PROJECT_ROOT}"/bin/* "${PROJECT_ROOT}"/lib/*
+             "${PROJECT_ROOT}"/bin/* \
+             "${PROJECT_ROOT}"/lib/* \
+             "${PROJECT_ROOT}/test/run_tests" \
+             "${PROJECT_ROOT}/install.sh"
 
-  if [ "$?" -eq 0 ]; then
+  if "$?"; then
     echo "shellcheck passed"
   else
     exit 1
