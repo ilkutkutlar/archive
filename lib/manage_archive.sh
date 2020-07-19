@@ -19,7 +19,10 @@ add_to_archive() {
     tar -r "${filename}" -f "${archive}"
   fi
 
-  if [ "$?" ]; then
+  # set -e is set, script exits if 
+  # tar failed, no need to check for 
+  # failing exit codes.
+  if [ "$?" -eq 0 ]; then
     echo "${filename} added to archive"
   else
     echo "Adding to archive failed"
@@ -42,7 +45,7 @@ unarchive() {
 
   tar -x -C "${archive_dir}" -f "${archive}" "${filename}"
 
-  if [ "$?" ] && [ -e "${archive_dir}/${filename}" ]; then
+  if [ "$?" -eq 0 ] && [ -e "${archive_dir}/${filename}" ]; then
     echo "Retrieved ${filename} from archive" 
   else
     echo "Retrieving from archive failed"
@@ -70,9 +73,9 @@ destroy_archived_file() {
   
   tar -C "${archive_dir}" -f "${archive}" --delete "${filename}"
 
-  if [ "$?" ]; then
+  if [ "$?" -eq 0 ]; then
     echo "Deleted ${filename} from archive permanently"
   else
-    echo "Deleting file from archive failed"
+    echo "Deleting from archive failed"
   fi
 }

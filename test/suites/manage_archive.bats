@@ -16,6 +16,11 @@ function remove_old_test_archive() {
   rm -f "${TEST_ARCHIVE_TAR}"
 }
 
+function remove_old_test_files() {
+  rm -f "${TEST_FILE}"
+  rm -rf "${TEST_DIR}"
+}
+
 function create_test_files() {
   touch "${TEST_FILE}"
   mkdir -p "${TEST_DIR}"
@@ -24,6 +29,7 @@ function create_test_files() {
 
 @test "archiving files" {
   remove_old_test_archive
+  remove_old_test_files
   create_test_files
 
   output_1="$( add_to_archive "${TEST_FILE}" 0 "${TEST_ARCHIVE_TAR}" )"
@@ -34,8 +40,6 @@ function create_test_files() {
 $( basename ${BATS_TMPDIR} )/test_dir/
 $( basename ${BATS_TMPDIR} )/test_dir/test1.txt"
 
-  local expected_output=""
-
   [ -f ${TEST_FILE} ]
   [ -d ${TEST_DIR} ]
   [ "${output_1}" = "${TEST_FILE} added to archive" ]
@@ -45,6 +49,7 @@ $( basename ${BATS_TMPDIR} )/test_dir/test1.txt"
 
 @test "archiving files followed by removing" {
   remove_old_test_archive
+  remove_old_test_files
   create_test_files
 
   output_1="$( add_to_archive "${TEST_FILE}" 1 "${TEST_ARCHIVE_TAR}" )"
@@ -60,6 +65,23 @@ $( basename ${BATS_TMPDIR} )/test_dir/test1.txt"
   [ "${output_1}" = "${TEST_FILE} added to archive" ]
   [ "${output_2}" = "${TEST_DIR} added to archive" ]
   [ "${actual}" = "${expected}" ]
+}
+
+@test "error during archiving files" {
+  remove_old_test_archive
+  remove_old_test_files
+  create_test_files
+
+  # Remove all permissions to create error
+  chmod 000 "${TEST_FILE}"
+
+  run add_to_archive "${TEST_FILE}" 0 "${TEST_ARCHIVE_TAR}"
+  local actual_contents="$( tar -tf "${TEST_ARCHIVE_TAR}" )"
+
+  [ -f ${TEST_FILE} ]
+  [ -d ${TEST_DIR} ]
+  [ "${lines[1]}" = "tar: /tmp/test.txt: Cannot open: Permission denied" ]
+  [ -z "${actual_contents}" ]
 }
 
 @test "unarchiving files from archive" {
@@ -81,7 +103,7 @@ test_dir/test1.txt"
 
 @test "unarchiving files followed by removing from archive" {
   remove_old_test_archive
-  rm -rf "${BATS_TMPDIR}/test_dir"
+  remove_old_test_files
   cp "${FIXTURES_DIR}/dummy_archive.tar" "${TEST_ARCHIVE_TAR}"
 
   local output="$( unarchive "test_dir" 1 "${TEST_ARCHIVE_TAR}" )"
@@ -94,5 +116,5 @@ Deleted test_dir from archive permanently"
   [ "${output}" = "${expected_output}" ]
   [ "${actual_contents}" = "${expected_contents}" ]
   [ -f "${BATS_TMPDIR}/test_dir/test1.txt" ]
-  [ -d "${BATS_TMPDIR}/test_dir" ]
+  [ -d "${TEST_DIR}" ]
 }
