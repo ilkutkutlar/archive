@@ -9,24 +9,43 @@
 parse_options() {
   action=
   file=
-  remove_files=
+  remove_files=0
 
-  while getopts 'a:dlhv' opt; do
+  set -- "$@"
+
+  while [ -n "$1" ]; do
+    opt="$1"
+    temp_action=
+
     case "${opt}" in
-      a) 
-        set_action add
-        file="${OPTARG}"
-        ;;
-      d) remove_files=1 ;;
-      l) set_action list ;;
-      h) set_action help ;;
-      v) set_action usage ;;
-      *) set_action help ;;
-    esac
-  done
+      -a | --add) 
+        temp_action="add"
+        shift
 
-  # shellcheck disable=SC2034
-  readonly action file remove_files
+        if [ -z "$1" ]; then
+          echo "No file argument given to '-a/--add' option"
+          echo
+          return 1
+        fi
+        
+        # shellcheck disable=SC2034
+        file="$1"
+        ;;
+      -d | --delete)
+        # shellcheck disable=SC2034
+        remove_files=1 ;;
+      -l | --list) temp_action="list" ;;
+      -h | --help) temp_action="help" ;;
+      -v | --version) temp_action="usage" ;;
+      *) return 1 ;;
+    esac
+
+    if [ -n "${temp_action}" ] && ! set_action "${temp_action}"; then 
+      return 1
+    fi
+
+    shift
+  done
 }
 
 
@@ -38,9 +57,7 @@ parse_options() {
 set_action() {
   if [ -n "${action}" ]; then
     echo "Incorrect set of options given"
-    echo
-    usage
-    exit 1
+    return 1
   fi
 
   action="$1"

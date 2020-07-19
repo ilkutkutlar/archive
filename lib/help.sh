@@ -1,6 +1,6 @@
 usage() {
   echo "Usage:"
-  echo "  $(basename "$0") -a [-d] file"
+  echo "  $(basename "$0") -a file [-d]"
   echo "  $(basename "$0") {-l|-v|-h}"
   echo "v0.0.1 - Ilkut Kutlar - July 2020"
 }

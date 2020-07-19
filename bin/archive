@@ -23,17 +23,15 @@ readonly PROJECT_ROOT="$(dirname "$0")/.."
 #  Main entry point
 # ==================
 
+
 # Sets $action, $file, $remove_files
-parse_options "$@"
+if ! parse_options "$@"; then
+  usage
+  exit 1
+fi
 
 case "${action}" in
-  add) 
-    if [ -z "${file}" ]; then
-      echo "No file argument given to '-a' option"
-      exit 1
-    fi
-
-    add_to_archive "${file}" "${remove_files}" 
+  add) add_to_archive "${file}" "${remove_files}" 
     ;;
   list) 
     # shellcheck disable=SC2119
@@ -41,5 +39,7 @@ case "${action}" in
     ;;
   help) help ;;
   usage) usage ;;
-  *) usage ;;
+  *) 
+    usage
+    exit 1 ;;
 esac
