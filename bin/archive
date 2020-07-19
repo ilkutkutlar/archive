@@ -1,54 +1,35 @@
 #!/bin/sh
 
 set -e
-
 readonly PROJECT_ROOT="$(dirname "$0")/.."
 
 # shellcheck source=lib/defaults.sh
 . "${PROJECT_ROOT}/lib/defaults.sh"
 
+# shellcheck source=lib/archive.sh
+. "${PROJECT_ROOT}/lib/archive.sh"
+
 # shellcheck source=lib/manage_archive.sh
 . "${PROJECT_ROOT}/lib/manage_archive.sh"
 
-# shellcheck source=lib/info.sh
-. "${PROJECT_ROOT}/lib/info.sh"
+# shellcheck source=lib/informative.sh
+. "${PROJECT_ROOT}/lib/informative.sh"
 
 # shellcheck source=lib/help.sh
 . "${PROJECT_ROOT}/lib/help.sh"
 
-action=""
-file=""
-remove_files=0
 
-set_action() {
-  if [ -z "${action}" ]; then
-    action="$1"
-  else
-    echo "Incorrect combination of options given"
-    echo
-    usage
-    exit 1
-  fi
-}
+# ==================
+#  Main entry point
+# ==================
 
-while getopts 'a:dlhv' opt; do
-  case "${opt}" in
-    a) 
-      set_action add
-      file="${OPTARG}" 
-      ;;
-    d) remove_files=1 ;;
-    l) set_action list ;;
-    h) set_action help ;;
-    v) set_action usage ;;
-    *) set_action help ;;
-  esac
-done
+# Sets $action, $file, $remove_files
+parse_options "$@"
 
 case "${action}" in
   add) 
     if [ -z "${file}" ]; then
-      echo "No file argument given"
+      echo "No file argument given to '-a' option"
       exit 1
     fi
 
@@ -60,4 +41,5 @@ case "${action}" in
     ;;
   help) help ;;
   usage) usage ;;
+  *) usage ;;
 esac

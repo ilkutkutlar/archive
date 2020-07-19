@@ -5,7 +5,7 @@ load test_helper
 function setup() {
   define_paths
   source "${PROJECT_ROOT}/lib/defaults.sh"
-  source "${PROJECT_ROOT}/lib/info.sh"
+  source "${PROJECT_ROOT}/lib/informative.sh"
 }
 
 @test "listing files in archive" {

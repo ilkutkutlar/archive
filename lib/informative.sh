@@ -23,16 +23,16 @@ list_top_level() {
 }
 
 
-# =================
-# Private functions
-# =================
+# ===================
+#  Private functions
+# ===================
 
 
 # $1: list of files
 filter_top_level_files() {
   files="$1"
 
-  for file in $files; do
+  for file in ${files}; do
     slash_count="$( echo "${file}" | grep -Ec '/' )"
     slash_at_the_end="$( echo "${file}" | grep -Ec '/$' )"
 

@@ -43,7 +43,7 @@ $( basename ${BATS_TMPDIR} )/test_dir/test1.txt"
   [ "${actual_contents}" = "${expected_contents}" ]
 }
 
-@test "moving files - archiving and removing" {
+@test "archiving files followed by removing" {
   remove_old_test_archive
   create_test_files
 

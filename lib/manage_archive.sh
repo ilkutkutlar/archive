@@ -55,9 +55,9 @@ unarchive() {
 }
 
 
-# =================
-# Private functions
-# =================
+# ===================
+#  Private functions
+# ===================
 
 
 # $1: file to delete from archive
@@ -67,7 +67,7 @@ destroy_archived_file() {
   filename="$1"
   archive=${2-"./${ARCHIVE_TAR}"}
   archive_dir="$( dirname "${archive}" )"
-
+  
   tar -C "${archive_dir}" -f "${archive}" --delete "${filename}"
 
   if [ "$?" ]; then
