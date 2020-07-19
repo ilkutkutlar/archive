@@ -31,6 +31,19 @@ parse_options() {
         # shellcheck disable=SC2034
         file="$1"
         ;;
+      -u | --unarchive) 
+        temp_action="${ACTION_UNARCHIVE}" 
+        shift
+
+        if [ -z "$1" ]; then
+          echo "No file argument given to '-u/--unarchive' option"
+          echo
+          return 1
+        fi
+        
+        # shellcheck disable=SC2034
+        file="$1"
+        ;;
       -d | --delete)
         # shellcheck disable=SC2034
         remove_files=1 ;;
