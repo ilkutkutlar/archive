@@ -121,6 +121,17 @@ function setup() {
   [ "${remove_files}" -eq 0 ]
 }
 
+@test "parsing options: top-level list option" {
+  parse_options -t
+  [ "${action}" = "${ACTION_TOP_LEVEL_LIST}" ]
+  [ -z "${file}" ]
+  [ "${remove_files}" -eq 0 ]
+
+  parse_options --top-level
+  [ "${action}" = "${ACTION_TOP_LEVEL_LIST}" ]
+  [ -z "${file}" ]
+  [ "${remove_files}" -eq 0 ]
+}
 
 # =============
 #  Help option

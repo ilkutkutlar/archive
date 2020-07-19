@@ -7,3 +7,4 @@ readonly ACTION_LIST=1
 readonly ACTION_HELP=2
 readonly ACTION_VERSION=3
 readonly ACTION_UNARCHIVE=4
+readonly ACTION_TOP_LEVEL_LIST=5

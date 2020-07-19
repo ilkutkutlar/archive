@@ -48,6 +48,7 @@ parse_options() {
         # shellcheck disable=SC2034
         remove_files=1 ;;
       -l | --list) temp_action="${ACTION_LIST}" ;;
+      -t | --top-level) temp_action="${ACTION_TOP_LEVEL_LIST}" ;;
       -h | --help) temp_action="${ACTION_HELP}" ;;
       -v | --version) temp_action="${ACTION_VERSION}" ;;
       *) return 1 ;;

@@ -41,6 +41,10 @@ case "${action}" in
     # shellcheck disable=SC2119
     list 
     ;;
+  "${ACTION_TOP_LEVEL_LIST}")
+    # shellcheck disable=SC2119
+    list_top_level
+    ;;
   "${ACTION_HELP}") help ;;
   "${ACTION_VERSION}") usage ;;
   *) 
