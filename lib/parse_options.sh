@@ -19,7 +19,7 @@ parse_options() {
 
     case "${opt}" in
       -a | --add) 
-        temp_action="add"
+        temp_action="${ACTION_ADD}"
         shift
 
         if [ -z "$1" ]; then
@@ -34,9 +34,9 @@ parse_options() {
       -d | --delete)
         # shellcheck disable=SC2034
         remove_files=1 ;;
-      -l | --list) temp_action="list" ;;
-      -h | --help) temp_action="help" ;;
-      -v | --version) temp_action="usage" ;;
+      -l | --list) temp_action="${ACTION_LIST}" ;;
+      -h | --help) temp_action="${ACTION_HELP}" ;;
+      -v | --version) temp_action="${ACTION_VERSION}" ;;
       *) return 1 ;;
     esac
 
@@ -57,6 +57,7 @@ parse_options() {
 set_action() {
   if [ -n "${action}" ]; then
     echo "Incorrect set of options given"
+    echo
     return 1
   fi
 

@@ -4,30 +4,31 @@ load test_helper
 
 function setup() {
   define_paths
-  source "${PROJECT_ROOT}/lib/archive.sh"
+  source "${PROJECT_ROOT}/lib/parse_options.sh"
   source "${PROJECT_ROOT}/lib/help.sh"
+  source "${PROJECT_ROOT}/lib/constants.sh"
 }
 
 @test "parsing options: single option with no argument" {
   parse_options -l
-  [ "${action}" = "list" ]
+  [ "${action}" = "${ACTION_LIST}" ]
   [ -z "${file}" ]
   [ "${remove_files}" -eq 0 ]
 
   parse_options --list
-  [ "${action}" = "list" ]
+  [ "${action}" = "${ACTION_LIST}" ]
   [ -z "${file}" ]
   [ "${remove_files}" -eq 0 ]
 }
 
 @test "parsing options: single option with argument" {
   parse_options -a file_name.txt
-  [ "${action}" = "add" ]
+  [ "${action}" = "${ACTION_ADD}" ]
   [ "${file}" = "file_name.txt" ]
   [ "${remove_files}" -eq 0 ]
 
   parse_options --add file_name.txt
-  [ "${action}" = "add" ]
+  [ "${action}" = "${ACTION_ADD}" ]
   [ "${file}" = "file_name.txt" ]
   [ "${remove_files}" -eq 0 ]
 }
@@ -35,19 +36,19 @@ function setup() {
 @test "parsing options: remove_files flag" {
   parse_options -a file_name.txt -d
 
-  [ "${action}" = "add" ]
+  [ "${action}" = "${ACTION_ADD}" ]
   [ "${file}" = "file_name.txt" ]
   [ "${remove_files}" -eq 1 ]
 
   parse_options --add file_name.txt --delete
 
-  [ "${action}" = "add" ]
+  [ "${action}" = "${ACTION_ADD}" ]
   [ "${file}" = "file_name.txt" ]
   [ "${remove_files}" -eq 1 ]
   
   parse_options --add file_name.txt -d
 
-  [ "${action}" = "add" ]
+  [ "${action}" = "${ACTION_ADD}" ]
   [ "${file}" = "file_name.txt" ]
   [ "${remove_files}" -eq 1 ]
 }
@@ -57,8 +58,8 @@ function setup() {
   # parse_options returning 1
   run parse_options -l -v
 
-  [ "${status}" -eq 1 ]
   [ "${lines[0]}" = "Incorrect set of options given" ]
+  [ "${status}" -eq 1 ]
 
   run parse_options --list --version
 

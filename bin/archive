@@ -3,11 +3,11 @@
 set -e
 readonly PROJECT_ROOT="$(dirname "$0")/.."
 
-# shellcheck source=lib/defaults.sh
-. "${PROJECT_ROOT}/lib/defaults.sh"
+# shellcheck source=lib/constants.sh
+. "${PROJECT_ROOT}/lib/constants.sh"
 
-# shellcheck source=lib/archive.sh
-. "${PROJECT_ROOT}/lib/archive.sh"
+# shellcheck source=lib/parse_options.sh
+. "${PROJECT_ROOT}/lib/parse_options.sh"
 
 # shellcheck source=lib/manage_archive.sh
 . "${PROJECT_ROOT}/lib/manage_archive.sh"
@@ -31,14 +31,15 @@ if ! parse_options "$@"; then
 fi
 
 case "${action}" in
-  add) add_to_archive "${file}" "${remove_files}" 
+  "${ACTION_ADD}") 
+    add_to_archive "${file}" "${remove_files}" 
     ;;
-  list) 
+  "${ACTION_LIST}") 
     # shellcheck disable=SC2119
     list 
     ;;
-  help) help ;;
-  usage) usage ;;
+  "${ACTION_HELP}") help ;;
+  "${ACTION_VERSION}") usage ;;
   *) 
     usage
     exit 1 ;;

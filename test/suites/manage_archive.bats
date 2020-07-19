@@ -4,7 +4,7 @@ load test_helper
 
 function setup() {
   define_paths
-  source "${PROJECT_ROOT}/lib/defaults.sh"
+  source "${PROJECT_ROOT}/lib/constants.sh"
   source "${PROJECT_ROOT}/lib/manage_archive.sh"
 
   readonly TEST_ARCHIVE_TAR="${BATS_TMPDIR}/${ARCHIVE_TAR}"
