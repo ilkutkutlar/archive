@@ -10,6 +10,10 @@ function setup() {
   readonly TEST_ARCHIVE_TAR="${BATS_TMPDIR}/${ARCHIVE_TAR}"
   readonly TEST_FILE="${BATS_TMPDIR}/test.txt"
   readonly TEST_DIR="${BATS_TMPDIR}/test_dir"
+
+  remove_old_test_archive
+  remove_old_test_files
+  create_test_files
 }
 
 function remove_old_test_archive() {
@@ -27,61 +31,56 @@ function create_test_files() {
   touch "${TEST_DIR}/test1.txt"
 }
 
-@test "archiving files" {
-  remove_old_test_archive
-  remove_old_test_files
-  create_test_files
+function test_archive_contents() {
+  tar -tf "${TEST_ARCHIVE_TAR}"
+}
 
-  output_1="$( add_to_archive "${TEST_FILE}" 0 "${TEST_ARCHIVE_TAR}" )"
-  output_2="$( add_to_archive "${TEST_DIR}" 0 "${TEST_ARCHIVE_TAR}" )"
+# $1: expected contents
+function assert_test_archive_contents() {
+  local expected_contents="$1"
+  [ "$( test_archive_contents )" = "${expected_contents}" ]
+}
+
+@test "archiving files" {
+  local output_1="$( add_to_archive "${TEST_FILE}" 0 "${TEST_ARCHIVE_TAR}" )"
+  local output_2="$( add_to_archive "${TEST_DIR}" 0 "${TEST_ARCHIVE_TAR}" )"
   
-  local actual_contents="$( tar -tf "${TEST_ARCHIVE_TAR}" )"
-  local expected_contents="$( basename ${BATS_TMPDIR} )/test.txt
-$( basename ${BATS_TMPDIR} )/test_dir/
-$( basename ${BATS_TMPDIR} )/test_dir/test1.txt"
+  local expected_contents="test.txt
+test_dir/
+test_dir/test1.txt"
 
   [ -f ${TEST_FILE} ]
   [ -d ${TEST_DIR} ]
   [ "${output_1}" = "${TEST_FILE} added to archive" ]
   [ "${output_2}" = "${TEST_DIR} added to archive" ]
-  [ "${actual_contents}" = "${expected_contents}" ]
+  [ "$( test_archive_contents )" = "${expected_contents}" ]
 }
 
 @test "archiving files followed by removing" {
-  remove_old_test_archive
-  remove_old_test_files
-  create_test_files
-
-  output_1="$( add_to_archive "${TEST_FILE}" 1 "${TEST_ARCHIVE_TAR}" )"
-  output_2="$( add_to_archive "${TEST_DIR}" 1 "${TEST_ARCHIVE_TAR}" )"
+  local output_1="$( add_to_archive "${TEST_FILE}" 1 "${TEST_ARCHIVE_TAR}" )"
+  local output_2="$( add_to_archive "${TEST_DIR}" 1 "${TEST_ARCHIVE_TAR}" )"
   
-  local actual="$( tar -tf "${TEST_ARCHIVE_TAR}" )"
-  local expected="$( basename ${BATS_TMPDIR} )/test.txt
-$( basename ${BATS_TMPDIR} )/test_dir/
-$( basename ${BATS_TMPDIR} )/test_dir/test1.txt"
+  local expected="test.txt
+test_dir/
+test_dir/test1.txt"
 
   [ ! -f ${TEST_FILE} ]
   [ ! -d ${TEST_DIR} ]
   [ "${output_1}" = "${TEST_FILE} added to archive" ]
   [ "${output_2}" = "${TEST_DIR} added to archive" ]
-  [ "${actual}" = "${expected}" ]
+  [ "$( test_archive_contents )" = "${expected}" ]
 }
 
 @test "error during archiving files" {
-  remove_old_test_archive
-  remove_old_test_files
-  create_test_files
-
   # Remove all permissions to create error
   chmod 000 "${TEST_FILE}"
 
   run add_to_archive "${TEST_FILE}" 0 "${TEST_ARCHIVE_TAR}"
-  local actual_contents="$( tar -tf "${TEST_ARCHIVE_TAR}" )"
 
   [ -f ${TEST_FILE} ]
   [ -d ${TEST_DIR} ]
-  [ "${lines[1]}" = "tar: /tmp/test.txt: Cannot open: Permission denied" ]
-  [ -z "${actual_contents}" ]
+  [ "${lines[0]}" = "tar: test.txt: Cannot open: Permission denied" ]
+  [ -z "$( test_archive_contents )" ]
 }
 
 @test "unarchiving files from archive" {
@@ -102,8 +101,6 @@ test_dir/test1.txt"
 
 
 @test "unarchiving files followed by removing from archive" {
-  remove_old_test_archive
-  remove_old_test_files
   cp "${FIXTURES_DIR}/dummy_archive.tar" "${TEST_ARCHIVE_TAR}"
 
   local output="$( unarchive "test_dir" 1 "${TEST_ARCHIVE_TAR}" )"
@@ -114,7 +111,7 @@ Deleted test_dir from archive permanently"
   local expected_contents="test.txt"
 
   [ "${output}" = "${expected_output}" ]
-  [ "${actual_contents}" = "${expected_contents}" ]
+  [ "$( test_archive_contents )" = "${expected_contents}" ]
   [ -f "${BATS_TMPDIR}/test_dir/test1.txt" ]
   [ -d "${TEST_DIR}" ]
 }
