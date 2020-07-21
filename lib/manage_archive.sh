@@ -17,6 +17,8 @@ add_to_archive() {
   fi
 
   if [ "${remove_files}" -eq 1 ]; then
+    # tar will complain if file path is absolute. To avoid it,
+    # change to file's directory and add file by it's basename.
     tar -C "${file_dir}" -r "${file_name}" -f "${archive}" --remove-files
   else
     tar -C "${file_dir}" -r "${file_name}" -f "${archive}"
@@ -46,6 +48,8 @@ unarchive() {
   archive=${3-"./${ARCHIVE_TAR}"}
   archive_dir="$( dirname "${archive}" )"
 
+  # Change to archive's directory, so that the unarchived
+  # file is placed inside the archive's directory instead of CWD.
   tar -C "${archive_dir}" -x -f "${archive}" "${file_path}"
 
   if [ "$?" -eq 0 ] && [ -e "${archive_dir}/${file_path}" ]; then
@@ -56,7 +60,7 @@ unarchive() {
   fi
 
   if [ "${remove_files}" -eq 1 ]; then
-    destroy_archived_file "${file_path}" "${archive}"
+    destroy_file_in_archive "${file_path}" "${archive}"
   fi
 }
 
@@ -66,18 +70,18 @@ unarchive() {
 # ===================
 
 
-# $1: file to delete from archive
+# $1: file path (in archive) to delete from archive
 # $2: optional: delete file from this archive, 
 #     defaults to ./$ARCHIVE_TAR
-destroy_archived_file() {
-  file_name="$1"
+destroy_file_in_archive() {
+  file_path="$1"
   archive=${2-"./${ARCHIVE_TAR}"}
   archive_dir="$( dirname "${archive}" )"
   
-  tar -C "${archive_dir}" -f "${archive}" --delete "${file_name}"
+  tar -C "${archive_dir}" -f "${archive}" --delete "${file_path}"
 
   if [ "$?" -eq 0 ]; then
-    echo "Deleted ${file_name} from archive permanently"
+    echo "Deleted ${file_path} from archive permanently"
   else
     echo "Deleting from archive failed"
   fi
