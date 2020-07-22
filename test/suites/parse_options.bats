@@ -4,9 +4,9 @@ load test_helper
 
 function setup() {
   define_paths
-  source "${PROJECT_ROOT}/lib/parse_options.sh"
-  source "${PROJECT_ROOT}/lib/help.sh"
-  source "${PROJECT_ROOT}/lib/constants.sh"
+  source "${PROJECT_ROOT}/lib/archive/parse_options.sh"
+  source "${PROJECT_ROOT}/lib/archive/help.sh"
+  source "${PROJECT_ROOT}/lib/archive/constants.sh"
 }
 
 

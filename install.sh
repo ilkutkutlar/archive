@@ -13,6 +13,6 @@ readonly INSTALL_DIR="${1-"/usr/local"}"
 
 install -d -m 755 "${INSTALL_DIR}/bin" "${INSTALL_DIR}/lib/archive"
 install -m 755 "${PROJECT_ROOT}/bin"/* "${INSTALL_DIR}/bin"
-install -m 755 "${PROJECT_ROOT}/lib"/* "${INSTALL_DIR}/lib/archive"
+install -m 755 "${PROJECT_ROOT}/lib/archive"/* "${INSTALL_DIR}/lib/archive"
 
 echo "Installed archive"

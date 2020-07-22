@@ -3,20 +3,20 @@
 set -e
 readonly PROJECT_ROOT="$(dirname "$0")/.."
 
-# shellcheck source=lib/constants.sh
-. "${PROJECT_ROOT}/lib/constants.sh"
+# shellcheck source=lib/archive/constants.sh
+. "${PROJECT_ROOT}/lib/archive/constants.sh"
 
-# shellcheck source=lib/parse_options.sh
-. "${PROJECT_ROOT}/lib/parse_options.sh"
+# shellcheck source=lib/archive/parse_options.sh
+. "${PROJECT_ROOT}/lib/archive/parse_options.sh"
 
-# shellcheck source=lib/manage_archive.sh
-. "${PROJECT_ROOT}/lib/manage_archive.sh"
+# shellcheck source=lib/archive/manage_archive.sh
+. "${PROJECT_ROOT}/lib/archive/manage_archive.sh"
 
-# shellcheck source=lib/informative.sh
-. "${PROJECT_ROOT}/lib/informative.sh"
+# shellcheck source=lib/archive/informative.sh
+. "${PROJECT_ROOT}/lib/archive/informative.sh"
 
-# shellcheck source=lib/help.sh
-. "${PROJECT_ROOT}/lib/help.sh"
+# shellcheck source=lib/archive/help.sh
+. "${PROJECT_ROOT}/lib/archive/help.sh"
 
 
 # ==================

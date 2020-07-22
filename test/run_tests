@@ -18,7 +18,7 @@ if is_installed "shellcheck"; then
              --enable=add-default-case \
              --exclude=SC2181 \
              "${PROJECT_ROOT}"/bin/* \
-             "${PROJECT_ROOT}"/lib/* \
+             "${PROJECT_ROOT}"/lib/archive/* \
              "${PROJECT_ROOT}/test/run_tests" \
              "${PROJECT_ROOT}/install.sh"
 

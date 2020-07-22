@@ -4,7 +4,7 @@ load test_helper
 
 function setup() {
   define_paths
-  source "${PROJECT_ROOT}/lib/manage_archive.sh"
+  source "${PROJECT_ROOT}/lib/archive/manage_archive.sh"
   
   remove_old_test_archive
   remove_old_test_files
