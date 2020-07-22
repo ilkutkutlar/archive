@@ -1,21 +1,21 @@
 # archive
 
-A POSIX-compliant shell script which adds archiving functionality to your directories. Archiving in this context refers to archiving as found in email clients, etc.
+A [POSIX](https://en.wikipedia.org/wiki/POSIX)-compliant Unix shell script which adds archiving functionality to your directories. Archiving in this context refers to archiving as found in email clients, etc.
 
 ## Motivation
 
-Email clients and productivity software (e.g. to-do list or note taking applications) usually offer an 'archive' feature, which users can use to move items which are not relevant anymore to a separate area to reduce cluttering. This way, the user can focus on items which are relevant right now, while still keeping old items for reference. This script aims to add this functionality to UNIX-like systems.
+Email clients and productivity software (e.g. to-do list or note taking applications) usually offer an 'archive' feature, which users can use to move items which are not relevant anymore to a separate area to reduce cluttering. This way, the user can focus on items which are relevant right now, while still keeping old items for reference. This script aims to add this functionality to Unix-like systems.
 
 ## How does it work?
 
-It is essentially a specialised interface to the UNIX tool `tar`. Instead of the user having to worry about remembering and typing long tar commands, handling errors, keeping track of tar files, etc. this script abstracts away all that to make archiving as simple as archiving an email with the click of a button: `archive -a file.txt`.
+It is essentially a specialised interface to the tool `tar`. Instead of the user having to worry about remembering and typing long tar commands, handling errors, keeping track of tar files, etc. this script abstracts away all that to make archiving as simple as archiving an email with the click of a button: `archive -a file.txt`.
 
 ## Installation
 
 Clone repository
 
 ```sh
-git clone 
+git clone https://github.com/ilkutkutlar/archive.git
 ```
 
 then run the `install.sh` script in project root directory. It will install files in `/usr/local` by default, but you can specify another directory as well - just make sure the `bin` directory in custom install directory is in your PATH.
