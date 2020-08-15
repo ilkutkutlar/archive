@@ -80,7 +80,8 @@ test_dir/test1.txt"
 }
 
 @test "unarchiving files from archive" {
-  # dummy archive contains: test.txt, test_dir/, test_dir/test1.txt
+  # dummy archive contains: 
+  # test.txt, test_dir/, test_dir/test1.txt
   cp "${DUMMY_ARCHIVE}" "${TEST_ARCHIVE_TAR}"
 
   run unarchive "test_dir" 0 "${TEST_ARCHIVE_TAR}"
@@ -89,9 +90,11 @@ test_dir/test1.txt"
   [ -d "$( dirname "${TEST_ARCHIVE_TAR}" )/test_dir" ]
   [ -f "$( dirname "${TEST_ARCHIVE_TAR}" )/test_dir/test1.txt" ]
 
-  local expected_contents="test.txt
-test_dir/
-test_dir/test1.txt"
+  local expected_contents="test_dir/
+test_dir/test1.txt
+test_dir/test_subdir/
+test_dir/test_subdir/test2.txt
+test.txt"
   assert_test_archive_contents "${expected_contents}"
 }
 

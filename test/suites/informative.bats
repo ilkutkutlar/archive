@@ -11,9 +11,11 @@ function setup() {
 @test "listing files in archive" {
   run list "${FIXTURES_DIR}/dummy_archive.tar"
   local expected="Files in archive:
-test.txt
 test_dir/
-test_dir/test1.txt"
+test_dir/test1.txt
+test_dir/test_subdir/
+test_dir/test_subdir/test2.txt
+test.txt"
 
   [ "${output}" = "${expected}" ]
 }
@@ -21,8 +23,8 @@ test_dir/test1.txt"
 @test "list top-level files in archive" {
   run list_top_level "${FIXTURES_DIR}/dummy_archive.tar"
   local expected="Top-level files in archive:
-test.txt
-test_dir/"
+test_dir/
+test.txt"
 
   [ "${output}" = "${expected}" ]
 }
