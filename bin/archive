@@ -1,6 +1,5 @@
 #!/usr/bin/env sh
 
-set -e
 readonly PROJECT_ROOT="$(dirname "$0")/.."
 
 # shellcheck source=lib/archive/constants.sh
@@ -30,6 +29,7 @@ if ! parse_options "$@"; then
   exit 1
 fi
 
+# $action set by parse_options
 case "${action}" in
   "${ACTION_ADD}") 
     add_to_archive "${file}" "${remove_files}" 

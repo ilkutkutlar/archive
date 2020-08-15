@@ -34,14 +34,20 @@ filter_top_level_files() {
 
   for file in ${files}; do
     slash_count="$( echo "${file}" | grep -Ec '/' )"
-    slash_at_the_end="$( echo "${file}" | grep -Ec '/$' )"
 
     is_top_level_file="$( test "${slash_count}" -eq 0; echo "$?" )"
     is_top_level_dir="$( test "${slash_count}" -eq 1 && 
-                         test "${slash_at_the_end}" -eq 1; echo "$?" )"
+                         ends_with "${file}" '/'; echo "$?" )"
 
     if [ "${is_top_level_file}" -eq 0 ] || [ "${is_top_level_dir}" -eq 0 ]; then
       echo "${file}"
     fi
   done
+}
+
+ends_with() {
+  string="$1"
+  ends_with="$2"
+
+  echo "${string}" | grep -qE "${ends_with}\$"
 }
