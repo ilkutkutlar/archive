@@ -1,5 +1,5 @@
 usage() {
-  echo "v0.0.1 - July 2020"
+  echo "v0.0.2 - August 2020"
   echo "Usage: $(basename "$0") {-a|-u} file [-d]"
   echo "       $(basename "$0") {-h|-l|-t|-h}"
 }
