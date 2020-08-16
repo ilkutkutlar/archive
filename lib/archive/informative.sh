@@ -16,7 +16,7 @@ list_top_level() {
   
   if [ -e "${archive}" ]; then
     echo "Top-level files in archive:"
-    filter_top_level_files "$(tar -t -f "${archive}")"
+    filter_top_level_files "$( tar -t -f "${archive}" )"
   else
     echo "No archive file in current directory"
   fi
@@ -28,26 +28,21 @@ list_top_level() {
 # ===================
 
 
-# $1: list of files
+# $1: list of file paths
 filter_top_level_files() {
-  files="$1"
+  file_paths="$1"
 
-  for file in ${files}; do
-    slash_count="$( echo "${file}" | grep -Ec '/' )"
-
-    is_top_level_file="$( test "${slash_count}" -eq 0; echo "$?" )"
-    is_top_level_dir="$( test "${slash_count}" -eq 1 && 
-                         ends_with "${file}" '/'; echo "$?" )"
-
-    if [ "${is_top_level_file}" -eq 0 ] || [ "${is_top_level_dir}" -eq 0 ]; then
+  for file in ${file_paths}; do
+    if is_top_level "${file}"; then
       echo "${file}"
     fi
   done
 }
 
-ends_with() {
-  string="$1"
-  ends_with="$2"
+is_top_level() {
+  file_path="$1"
 
-  echo "${string}" | grep -qE "${ends_with}\$"
+  # By definition, current directory, ".", 
+  # is the dirname of a top-level file.
+  test "$( dirname "${file_path}" )" = "." 
 }

@@ -26,5 +26,6 @@ test.txt"
 test_dir/
 test.txt"
 
+  echo "$output"
   [ "${output}" = "${expected}" ]
 }
