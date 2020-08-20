@@ -16,7 +16,7 @@ list_top_level() {
   
   if [ -e "${archive}" ]; then
     echo "Top-level files in archive:"
-    filter_top_level_files "$( tar -t -f "${archive}" )"
+    tar -t -f "${archive}" | filter_top_level_files
   else
     echo "No archive file in current directory"
   fi
@@ -28,13 +28,11 @@ list_top_level() {
 # ===================
 
 
-# $1: list of file paths
+# stdin: list of file paths
 filter_top_level_files() {
-  file_paths="$1"
-
-  for file in ${file_paths}; do
-    if is_top_level "${file}"; then
-      echo "${file}"
+  while read -r file_path; do
+    if is_top_level "${file_path}"; then
+      echo "${file_path}"
     fi
   done
 }
