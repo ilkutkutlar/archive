@@ -5,8 +5,10 @@ function define_paths() {
   readonly TEST_ARCHIVE_TAR="${BATS_TMPDIR}/test_archive.tar"
   readonly TEST_DIR="${BATS_TMPDIR}/test_dir"
   readonly TEST_FILE="${BATS_TMPDIR}/test.txt"
+  readonly TEST_FILE_SPACES="${BATS_TMPDIR}/test file with spaces.txt"
 
   readonly DUMMY_ARCHIVE="${FIXTURES_DIR}/dummy_archive.tar"
+  readonly DUMMY_ARCHIVE_2="${FIXTURES_DIR}/dummy_archive2.tar"
 }
 
 
@@ -16,11 +18,13 @@ function remove_old_test_archive() {
 
 function remove_old_test_files() {
   rm -f "${TEST_FILE}"
+  touch "${TEST_FILE_SPACES}"
   rm -rf "${TEST_DIR}"
 }
 
 function create_test_files() {
   touch "${TEST_FILE}"
+  touch "${TEST_FILE_SPACES}"
   mkdir -p "${TEST_DIR}"
   touch "${TEST_DIR}/test1.txt"
 }

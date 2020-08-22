@@ -20,6 +20,16 @@ test.txt"
   [ "${output}" = "${expected}" ]
 }
 
+@test "listing files in archive where a path has spaces" {
+  run list "${FIXTURES_DIR}/dummy_archive2.tar"
+  local expected="Files in archive:
+test.txt
+dir with spaces/
+dir with spaces/file with spaces.txt"
+
+  [ "${output}" = "${expected}" ]
+}
+
 @test "listing top-level files in archive" {
   run list_top_level "${FIXTURES_DIR}/dummy_archive.tar"
   local expected="Top-level files in archive:

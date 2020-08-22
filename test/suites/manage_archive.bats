@@ -50,6 +50,16 @@ test_dir/test1.txt"
   assert_test_archive_contents "${expected_contents}"
 }
 
+@test "archiving files with spaces in name" {
+  run add_to_archive "${TEST_FILE_SPACES}" 0 "${TEST_ARCHIVE_TAR}"
+  [ "${output}" = "${TEST_FILE_SPACES} added to archive" ]
+
+  [ -f "${TEST_FILE_SPACES}" ]
+
+  local expected_contents="test file with spaces.txt"
+  assert_test_archive_contents "${expected_contents}"
+}
+
 @test "archiving files followed by removing" {
   run add_to_archive "${TEST_FILE}" 1 "${TEST_ARCHIVE_TAR}"
   [ "${output}" = "${TEST_FILE} added to archive" ]
@@ -63,6 +73,16 @@ test_dir/test1.txt"
   local expected_contents="test.txt
 test_dir/
 test_dir/test1.txt"
+  assert_test_archive_contents "${expected_contents}"
+}
+
+@test "archiving files with spaces in name followed by removing" {
+  run add_to_archive "${TEST_FILE_SPACES}" 1 "${TEST_ARCHIVE_TAR}"
+  [ "${output}" = "${TEST_FILE_SPACES} added to archive" ]
+  
+  [ ! -f "${TEST_FILE_SPACES}" ]
+
+  local expected_contents="test file with spaces.txt"
   assert_test_archive_contents "${expected_contents}"
 }
 
@@ -98,6 +118,22 @@ test.txt"
   assert_test_archive_contents "${expected_contents}"
 }
 
+@test "unarchiving files with spaces in name from archive" {
+  # dummy archive 2 contains: 
+  # test.txt, dir with spaces/, dir with spaces/file with spaces.txt
+  cp "${DUMMY_ARCHIVE_2}" "${TEST_ARCHIVE_TAR}"
+
+  run unarchive "dir with spaces" 0 "${TEST_ARCHIVE_TAR}"
+  [ "${output}" = "Retrieved dir with spaces from archive" ]
+
+  [ -d "$( dirname "${TEST_ARCHIVE_TAR}" )/dir with spaces" ]
+  [ -f "$( dirname "${TEST_ARCHIVE_TAR}" )/dir with spaces/file with spaces.txt" ]
+
+  local expected_contents="test.txt
+dir with spaces/
+dir with spaces/file with spaces.txt"
+  assert_test_archive_contents "${expected_contents}"
+}
 
 @test "unarchiving files followed by removing from archive" {
   # dummy archive contains: test.txt, test_dir/, test_dir/test1.txt
@@ -110,6 +146,23 @@ Deleted test_dir from archive permanently"
   [ "${output}" = "${expected_output}" ]
   [ -f "${BATS_TMPDIR}/test_dir/test1.txt" ]
   [ -d "${TEST_DIR}" ]
+
+  local expected_contents="test.txt"
+  assert_test_archive_contents "${expected_contents}"
+}
+
+@test "unarchiving files with spaces in name followed by removing from archive" {
+  # dummy archive 2 contains: 
+  # test.txt, dir with spaces/, dir with spaces/file with spaces.txt
+  cp "${DUMMY_ARCHIVE_2}" "${TEST_ARCHIVE_TAR}"
+
+  run unarchive "dir with spaces" 1 "${TEST_ARCHIVE_TAR}"
+  local expected_output="Retrieved dir with spaces from archive
+Deleted dir with spaces from archive permanently"
+
+  [ "${output}" = "${expected_output}" ]
+  [ -d "$( dirname "${TEST_ARCHIVE_TAR}" )/dir with spaces" ]
+  [ -f "$( dirname "${TEST_ARCHIVE_TAR}" )/dir with spaces/file with spaces.txt" ]
 
   local expected_contents="test.txt"
   assert_test_archive_contents "${expected_contents}"

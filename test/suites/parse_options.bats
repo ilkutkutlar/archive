@@ -56,6 +56,18 @@ function setup() {
   [ "${lines[0]}" = "No file argument given to '-a/--add' option" ]
 }
 
+@test "parsing options: add option with path containing spaces" {
+  parse_options -a "file name.txt"
+  [ "${action}" = "${ACTION_ADD}" ]
+  [ "${file}" = "file name.txt" ]
+  [ "${remove_files}" -eq 0 ]
+
+  parse_options --add "file name.txt"
+  [ "${action}" = "${ACTION_ADD}" ]
+  [ "${file}" = "file name.txt" ]
+  [ "${remove_files}" -eq 0 ]
+}
+
 
 # ==================
 #  Unarchive option
@@ -103,6 +115,18 @@ function setup() {
   [ "${lines[0]}" = "No file argument given to '-u/--unarchive' option" ]
 }
 
+@test "parsing options: unarchive option with path containing spaces" {
+  parse_options -u "file name.txt"
+  [ "${action}" = "${ACTION_UNARCHIVE}" ]
+  [ "${file}" = "file name.txt" ]
+  [ "${remove_files}" -eq 0 ]
+
+  parse_options --unarchive "file name.txt"
+  [ "${action}" = "${ACTION_UNARCHIVE}" ]
+  [ "${file}" = "file name.txt" ]
+  [ "${remove_files}" -eq 0 ]
+}
+
 
 # =============
 #  List option
@@ -132,6 +156,7 @@ function setup() {
   [ -z "${file}" ]
   [ "${remove_files}" -eq 0 ]
 }
+
 
 # =============
 #  Help option
