@@ -20,12 +20,20 @@ test.txt"
   [ "${output}" = "${expected}" ]
 }
 
-@test "list top-level files in archive" {
+@test "listing top-level files in archive" {
   run list_top_level "${FIXTURES_DIR}/dummy_archive.tar"
   local expected="Top-level files in archive:
 test_dir/
 test.txt"
 
-  echo "$output"
+  [ "${output}" = "${expected}" ]
+}
+
+@test "listing top-level files in archive where a path has spaces" {
+  run list_top_level "${FIXTURES_DIR}/dummy_archive2.tar"
+  local expected="Top-level files in archive:
+test.txt
+dir with spaces/"
+
   [ "${output}" = "${expected}" ]
 }
