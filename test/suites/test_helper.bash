@@ -18,7 +18,7 @@ function remove_old_test_archive() {
 
 function remove_old_test_files() {
   rm -f "${TEST_FILE}"
-  touch "${TEST_FILE_SPACES}"
+  rm -f "${TEST_FILE_SPACES}"
   rm -rf "${TEST_DIR}"
 }
 
