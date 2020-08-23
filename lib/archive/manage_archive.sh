@@ -34,6 +34,27 @@ add_to_archive() {
   fi
 }
 
+# Gzip file and add to given archive.
+#
+# $1: file path to archive
+# $2: remove file after adding to archive, 1 or 0
+# $3: optional: add file to custom archive, defaults to ./$ARCHIVE_TAR
+add_to_archive_gzipped() {
+  file_path="$1"
+  file_name="$( basename "$1" )"
+  file_dir="$( dirname "$1" )"
+
+  remove_files="$2"
+  archive=${3-"./${ARCHIVE_TAR}"}
+  
+  if [ ! -e "${file_path}" ]; then
+    echo "No such file: ${file_path}"
+    return 1
+  fi
+
+  
+}
+
 # Unarchives file from given archive file. 
 # File is extracted into the same directory 
 # as the archive file.
@@ -84,5 +105,31 @@ destroy_file_in_archive() {
     echo "Deleted ${file_path} from archive permanently"
   else
     echo "Deleting from archive failed"
+  fi
+}
+
+# 
+# $1: file path
+gzip_file_or_dir() {
+  file_path="$1"
+  file_name="$( basename "${file_path}" )"
+  file_dir="$( dirname "${file_path}" )"
+
+  if [ ! -e "${file_path}" ]; then
+    return 2
+  fi
+
+  if [ -f "${file_path}" ]; then
+    gzip "${file_path}"
+
+    if [ "$?" -eq 1 ] || ! gzip -t "${file_path}.gz"; then
+      return 1
+    fi
+  else
+    tar -C "${file_dir}" -f "${file_name}.tar.gz"
+
+    if [ "$?" -eq 1 ] || ! gzip -t "${file_path}.tar.gz"; then
+      return 1 
+    fi
   fi
 }

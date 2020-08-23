@@ -113,9 +113,27 @@ test_dir.tar.gz/"
   assert_test_archive_contents "${expected_contents}"
 }
 
+
+@test "error during archiving files in gzipped format" {
+  # Remove read permission to create error
+  chmod a-r "${TEST_FILE}"
+
+  run add_to_archive_gzipped "${TEST_FILE}" 0 "${TEST_ARCHIVE_TAR}"
+  [ "${lines[0]}" = "gzip: test.txt: Permission denied" ]
+  [ "${status}" -eq 1 ]
+
+  # TODO: Should be testing for archiving a directory as well.
+
+  [ -f "${TEST_FILE}" ]
+  [ ! -f "${TEST_FILE}.gz" ]
+
+  # Error, so archive should be empty
+  [ -z "$( test_archive_contents )" ]
+}
+
 @test "error during archiving files" {
-  # Remove all permissions to create error
-  chmod 000 "${TEST_FILE}"
+  # Remove read permission to create error
+  chmod a-r "${TEST_FILE}"
 
   run add_to_archive "${TEST_FILE}" 0 "${TEST_ARCHIVE_TAR}"
   [ "${lines[0]}" = "tar: test.txt: Cannot open: Permission denied" ]
@@ -123,7 +141,8 @@ test_dir.tar.gz/"
   [ -f "${TEST_FILE}" ]
   [ -d "${TEST_DIR}" ]
 
-  [ -z "$( test_archive_contents )" ]
+  # Error, so archive should be empty
+  [ -z "$( test_archive_contents )" ] 
 }
 
 @test "unarchiving files from archive" {
