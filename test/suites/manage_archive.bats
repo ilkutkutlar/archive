@@ -41,7 +41,6 @@ test_dir/test1.txt"
   touch "${different_test_file}"
 
   run add_to_archive "${different_test_file}" 0 "${TEST_ARCHIVE_TAR}"
-  echo "${output}"
   [ "${output}" = "${different_test_file} added to archive" ]
 
   [ -f "${different_test_file}" ]
@@ -83,6 +82,34 @@ test_dir/test1.txt"
   [ ! -f "${TEST_FILE_SPACES}" ]
 
   local expected_contents="test file with spaces.txt"
+  assert_test_archive_contents "${expected_contents}"
+}
+
+@test "archiving files in gzipped format" {
+  # Files are compressed with `gzip` and have extension .gz
+  # Directories are compressed with `tar` as a .tar.gz
+
+  run add_to_archive_gzipped "${TEST_FILE}" 0 "${TEST_ARCHIVE_TAR}"
+  [ "${output}" = "${TEST_FILE} added to archive as a gzipped file" ]
+  [ "${status}" -eq 0 ]
+
+  run add_to_archive_gzipped "${TEST_DIR}" 0 "${TEST_ARCHIVE_TAR}"
+  [ "${output}" = "${TEST_DIR} added to archive as a gzipped tar" ]
+  [ "${status}" -eq 0 ]
+
+  [ -f "${TEST_FILE}" ]
+  # The gzipped files are temporary: must be removed after adding.
+  [ ! -f "${TEST_FILE}.gz" ]
+
+  [ -d "${TEST_DIR}" ]
+  [ ! -d "${TEST_DIR}.tar.gz" ]
+
+  # TODO: While we can reasonably assume these test files being in
+  # TODO: the archive proves gzipping worked as expected, a better 
+  # TODO: test could have fixtures which are gzipped versions of these
+  # TODO: test files and compare them to the ones in the archive.
+  local expected_contents="test.txt.gz
+test_dir.tar.gz/"
   assert_test_archive_contents "${expected_contents}"
 }
 
