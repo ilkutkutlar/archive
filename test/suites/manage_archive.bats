@@ -109,26 +109,8 @@ test_dir/test1.txt"
   # TODO: test could have fixtures which are gzipped versions of these
   # TODO: test files and compare them to the ones in the archive.
   local expected_contents="test.txt.gz
-test_dir.tar.gz/"
+test_dir.tar.gz"
   assert_test_archive_contents "${expected_contents}"
-}
-
-
-@test "error during archiving files in gzipped format" {
-  # Remove read permission to create error
-  chmod a-r "${TEST_FILE}"
-
-  run add_to_archive_gzipped "${TEST_FILE}" 0 "${TEST_ARCHIVE_TAR}"
-  [ "${lines[0]}" = "gzip: test.txt: Permission denied" ]
-  [ "${status}" -eq 1 ]
-
-  # TODO: Should be testing for archiving a directory as well.
-
-  [ -f "${TEST_FILE}" ]
-  [ ! -f "${TEST_FILE}.gz" ]
-
-  # Error, so archive should be empty
-  [ -z "$( test_archive_contents )" ]
 }
 
 @test "error during archiving files" {
@@ -143,6 +125,25 @@ test_dir.tar.gz/"
 
   # Error, so archive should be empty
   [ -z "$( test_archive_contents )" ] 
+}
+
+@test "error during archiving files in gzipped format" {
+  # Remove read permission to create error
+  chmod a-r "${TEST_FILE}"
+
+  run add_to_archive_gzipped "${TEST_FILE}" 0 "${TEST_ARCHIVE_TAR}"
+  # Unlike with tar, since we are not using the -C option, gzip
+  # will show the full path of the file, so it won't only say "test.txt"
+  [ "${lines[0]}" = "gzip: ${TEST_FILE}: Permission denied" ]
+  [ "${status}" -eq 1 ]
+
+  # TODO: Should be testing for archiving a directory as well.
+
+  [ -f "${TEST_FILE}" ]
+  [ ! -f "${TEST_FILE}.gz" ]
+
+  # Error, so archive should be empty
+  [ -z "$( test_archive_contents )" ]
 }
 
 @test "unarchiving files from archive" {

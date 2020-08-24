@@ -31,6 +31,19 @@ parse_options() {
         # shellcheck disable=SC2034
         file="$1"
         ;;
+      -z | --add-gzipped)
+        temp_action="${ACTION_ADD_GZIPPED}" 
+        shift
+
+        if [ -z "$1" ]; then
+          echo "No file argument given to '-z/--add-gzipped' option"
+          echo
+          return 1
+        fi
+
+        # shellcheck disable=SC2034
+        file="$1"
+        ;;
       -u | --unarchive) 
         temp_action="${ACTION_UNARCHIVE}" 
         shift

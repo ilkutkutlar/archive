@@ -68,18 +68,13 @@ function setup() {
   [ "${remove_files}" -eq 0 ]
 }
 
-@test "parsing options: add option with gzip flag" {
-  parse_options -a file_name.txt -z
+@test "parsing options: add gzipped option" {
+  parse_options -z file_name.txt
   [ "${action}" = "${ACTION_ADD_GZIPPED}" ]
   [ "${file}" = "file_name.txt" ]
   [ "${remove_files}" -eq 0 ]
 
-  parse_options --add file_name.txt --gzipped
-  [ "${action}" = "${ACTION_ADD_GZIPPED}" ]
-  [ "${file}" = "file_name.txt" ]
-  [ "${remove_files}" -eq 0 ]
-  
-  parse_options --add file_name.txt -z
+  parse_options --add-gzipped file_name.txt
   [ "${action}" = "${ACTION_ADD_GZIPPED}" ]
   [ "${file}" = "file_name.txt" ]
   [ "${remove_files}" -eq 0 ]
