@@ -24,11 +24,40 @@ add_to_archive() {
     tar -C "${file_dir}" -r "${file_name}" -f "${archive}"
   fi
 
-  # set -e is set, script exits if 
-  # tar failed, no need to check for 
-  # failing exit codes.
   if [ "$?" -eq 0 ]; then
     echo "${file_path} added to archive"
+  else
+    echo "Adding to archive failed"
+  fi
+}
+
+# Gzip file and add to given archive.
+#
+# $1: file path to archive
+# $2: optional: add file to custom archive, defaults to ./$ARCHIVE_TAR
+add_to_archive_gzipped() {
+  file_path="$1"
+  file_dir="$( dirname "$1" )"
+  archive=${2-"./${ARCHIVE_TAR}"}
+  
+  if [ ! -e "${file_path}" ]; then
+    echo "No such file: ${file_path}"
+    return 1
+  fi
+
+  gzipped_file_name="$( gzip_file_or_dir "${file_path}" )"
+  if [ -z "${gzipped_file_name}" ]; then
+    # gzip_file_or_dir will echo an appropriate error message;
+    # just return the exit status here
+    return 1
+  fi
+
+  # Remove the gzipped file as it is only temporary.
+  # There is no option to remove the original file when gzipping. 
+  tar -C "${file_dir}" -r "${gzipped_file_name}" -f "${archive}" --remove-files
+
+  if [ "$?" -eq 0 ]; then
+    echo "${file_path} added to archive as a gzipped file named ${gzipped_file_name}"
   else
     echo "Adding to archive failed"
   fi
@@ -84,5 +113,37 @@ destroy_file_in_archive() {
     echo "Deleted ${file_path} from archive permanently"
   else
     echo "Deleting from archive failed"
+  fi
+}
+
+# Gzip the given file. If it's a file, then it will be gzipped
+# directly. If it's a directory, the directory will be tarred
+# and gzipped (i.e. .tar.gz). In both cases, the original
+# file will not be removed and the gzipped file will be in
+# the same directory as the original file.
+# 
+# $1: file path
+# Echoes file name of gzipped file/dir if successful.
+# Echoes nothing on error.
+gzip_file_or_dir() {
+  file_path="$1"
+  file_name="$( basename "${file_path}" )"
+  file_dir="$( dirname "${file_path}" )"
+
+  if [ -f "${file_path}" ]; then
+    # -k to keep the original file.
+    gzip -k "${file_path}"
+
+    if [ "$?" -eq 0 ] || gzip -t "${file_path}.gz"; then
+      echo "${file_name}.gz"
+    fi
+  else
+    # Use file_path instead of file_name here, so that it creates
+    # the archive in the same directory as the file.
+    tar -C "${file_dir}" -czf "${file_path}.tar.gz" "${file_name}"
+
+    if [ "$?" -eq 0 ] || gzip -t "${file_path}.tar.gz"; then
+      echo "${file_name}.tar.gz"
+    fi
   fi
 }

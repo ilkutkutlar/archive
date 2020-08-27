@@ -20,6 +20,8 @@ function remove_old_test_files() {
   rm -f "${TEST_FILE}"
   rm -f "${TEST_FILE_SPACES}"
   rm -rf "${TEST_DIR}"
+  rm -f "${TEST_FILE}.gz"
+  rm -rf "${TEST_DIR}.tar.gz"
 }
 
 function create_test_files() {
