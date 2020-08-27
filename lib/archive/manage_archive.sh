@@ -34,24 +34,15 @@ add_to_archive() {
 # Gzip file and add to given archive.
 #
 # $1: file path to archive
-# $2: remove file after adding to archive, 1 or 0
-# $3: optional: add file to custom archive, defaults to ./$ARCHIVE_TAR
+# $2: optional: add file to custom archive, defaults to ./$ARCHIVE_TAR
 add_to_archive_gzipped() {
   file_path="$1"
   file_dir="$( dirname "$1" )"
-
-  remove_files="$2"
-  archive=${3-"./${ARCHIVE_TAR}"}
+  archive=${2-"./${ARCHIVE_TAR}"}
   
   if [ ! -e "${file_path}" ]; then
     echo "No such file: ${file_path}"
     return 1
-  fi
-
-  if [ -f "${file_path}" ]; then
-    is_file=1
-  else
-    is_file=0 
   fi
 
   gzipped_file_name="$( gzip_file_or_dir "${file_path}" )"
@@ -61,14 +52,12 @@ add_to_archive_gzipped() {
     return 1
   fi
 
+  # Remove the gzipped file as it is only temporary.
+  # There is no option to remove the original file when gzipping. 
   tar -C "${file_dir}" -r "${gzipped_file_name}" -f "${archive}" --remove-files
 
   if [ "$?" -eq 0 ]; then
-    if [ "${is_file}" -eq 1 ]; then
-      echo "${file_path} added to archive as a gzipped file"
-    else
-      echo "${file_path} added to archive as a gzipped tar"
-    fi
+    echo "${file_path} added to archive as a gzipped file named ${gzipped_file_name}"
   else
     echo "Adding to archive failed"
   fi
