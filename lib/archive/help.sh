@@ -2,7 +2,7 @@ usage() {
   echo "v0.0.3 - August 2020"
   echo "Usage: $(basename "$0") {-a|-u} file [-d]"
   echo "       $(basename "$0") -z file"
-  echo "       $(basename "$0") {-h|-l|-t|-h}"
+  echo "       $(basename "$0") {-h|-l|-t|-v}"
 }
 
 help() {
