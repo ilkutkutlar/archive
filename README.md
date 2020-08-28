@@ -44,6 +44,13 @@ To move file to archive (add to archive, remove it afterwards):
 archive -a file.txt -d
 ```
 
+To archive a gzipped version of the file (gzip the file, add gzipped version to archive, remove the gzipped file but keep the original unchanged):
+
+```sh
+# Note that the -d flag doesn't work with the -z option yet.
+archive -z file.txt
+```
+
 To unarchive file (but still keep in archive):
 
 ```sh
@@ -67,7 +74,8 @@ archive -l
 ```sh
 -a, --add FILE          # Add file to archive of current directory'
 -u, --unarchive FILE    # Unarchive file from archive of current directory'
--d, --delete            # Pass flag to -a or -u to delete file in dir/archive after operation'
+-d, --delete            # Pass flag to -a or -u (but not -z) to delete file in dir/archive after operation'
+-z, --add-gzipped FILE  # Add a gzipped version of file to archive. Original file is not affected.'
 -l, --list              # List the files in current directory archive'
 -t, --top-level         # List only top-level files and directories in current directory archive'
 -v, --version           # Print version and exit'
