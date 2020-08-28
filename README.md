@@ -47,7 +47,7 @@ archive -a file.txt -d
 To archive a gzipped version of the file (gzip the file, add gzipped version to archive, remove the gzipped file but keep the original unchanged):
 
 ```sh
-# Note that the -d flag doesn't work with the -z option yet.
+# The -d flag doesn't work with the -z option yet.
 archive -z file.txt
 ```
 
