@@ -34,3 +34,9 @@ function create_test_files() {
 function test_archive_contents() {
   tar -tf "${TEST_ARCHIVE_TAR}"
 }
+
+# $1: expected contents
+function assert_test_archive_contents() {
+  local expected_contents="$1"
+  [ "$( test_archive_contents )" = "${expected_contents}" ]
+}
