@@ -11,8 +11,8 @@ readonly PROJECT_ROOT="$(dirname "$0")/.."
 # shellcheck source=lib/archive/manage_archive.sh
 . "${PROJECT_ROOT}/lib/archive/manage_archive.sh"
 
-# shellcheck source=lib/archive/informative.sh
-. "${PROJECT_ROOT}/lib/archive/informative.sh"
+# shellcheck source=lib/archive/get_archive_info.sh
+. "${PROJECT_ROOT}/lib/archive/get_archive_info.sh"
 
 # shellcheck source=lib/archive/help.sh
 . "${PROJECT_ROOT}/lib/archive/help.sh"
