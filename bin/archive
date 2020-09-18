@@ -35,7 +35,7 @@ case "${action}" in
     add_to_archive "${file}" "${remove_files}" 
     ;;
   "${ACTION_ADD_GZIPPED}")
-    add_to_archive_gzipped "${file}"
+    add_to_archive_gzipped "${file}" "${remove_files}"
     ;;
   "${ACTION_UNARCHIVE}") 
     unarchive "${file}" "${remove_files}" 

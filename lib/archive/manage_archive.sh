@@ -34,18 +34,20 @@ add_to_archive() {
 # Gzip file and add to given archive.
 #
 # $1: file path to archive
-# $2: optional: add file to custom archive, defaults to ./$ARCHIVE_TAR
+# $2: remove file after adding to archive, 1 or 0
+# $3: optional: add file to custom archive, defaults to ./$ARCHIVE_TAR
 add_to_archive_gzipped() {
   file_path="$1"
   file_dir="$( dirname "$1" )"
-  archive=${2-"./${ARCHIVE_TAR}"}
+  remove_files="$2"
+  archive=${3-"./${ARCHIVE_TAR}"}
   
   if [ ! -e "${file_path}" ]; then
     echo "No such file: ${file_path}"
     return 1
   fi
 
-  gzipped_file_name="$( gzip_file_or_dir "${file_path}" )"
+  gzipped_file_name="$( gzip_file_or_dir "${file_path}" "${remove_files}" )"
   if [ -z "${gzipped_file_name}" ]; then
     # gzip_file_or_dir will echo an appropriate error message;
     # just return the exit status here
@@ -123,27 +125,61 @@ destroy_file_in_archive() {
 # the same directory as the original file.
 # 
 # $1: file path
+# $2: remove original files
 # Echoes file name of gzipped file/dir if successful.
 # Echoes nothing on error.
 gzip_file_or_dir() {
   file_path="$1"
+  remove_files="$2"
+
+  if [ -f "${file_path}" ]; then
+    gzip_file "${file_path}" "${remove_files}"
+  else
+    gzip_dir "${file_path}" "${remove_files}"
+  fi
+}
+
+
+# $1: file path
+# $2: remove original file
+# Echoes file name of gzipped file if successful.
+# Echoes nothing on error.
+gzip_file() { 
+  file_path="$1"
+  remove_files="$2"
+  file_name="$( basename "${file_path}" )"
+
+  if [ "${remove_files}" -eq 1 ]; then
+    gzip "${file_path}"
+  else
+    # -k to keep the original file.
+    gzip -k "${file_path}"
+  fi
+
+  if [ "$?" -eq 0 ] || gzip -t "${file_path}.gz"; then
+    echo "${file_name}.gz"
+  fi
+}
+
+# $1: dir path
+# $2: remove original dir
+# Echoes dir name of gzipped dir if successful.
+# Echoes nothing on error.
+gzip_dir() {
+  file_path="$1"
+  remove_files="$2"
   file_name="$( basename "${file_path}" )"
   file_dir="$( dirname "${file_path}" )"
 
-  if [ -f "${file_path}" ]; then
-    # -k to keep the original file.
-    gzip -k "${file_path}"
-
-    if [ "$?" -eq 0 ] || gzip -t "${file_path}.gz"; then
-      echo "${file_name}.gz"
-    fi
+  if [ "${remove_files}" -eq 1 ]; then
+    tar -C "${file_dir}" -czf "${file_path}.tar.gz" "${file_name}" --remove-files
   else
     # Use file_path instead of file_name here, so that it creates
     # the archive in the same directory as the file.
     tar -C "${file_dir}" -czf "${file_path}.tar.gz" "${file_name}"
+  fi
 
-    if [ "$?" -eq 0 ] || gzip -t "${file_path}.tar.gz"; then
-      echo "${file_name}.tar.gz"
-    fi
+  if [ "$?" -eq 0 ] || gzip -t "${file_path}.tar.gz"; then
+    echo "${file_name}.tar.gz"
   fi
 }
