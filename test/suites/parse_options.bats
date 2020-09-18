@@ -80,6 +80,18 @@ function setup() {
   [ "${remove_files}" -eq 0 ]
 }
 
+@test "parsing options: add gzipped option with delete flag" {
+  parse_options -z file_name.txt -d
+  [ "${action}" = "${ACTION_ADD_GZIPPED}" ]
+  [ "${file}" = "file_name.txt" ]
+  [ "${remove_files}" -eq 1 ]
+
+  parse_options --add-gzipped file_name.txt --delete
+  [ "${action}" = "${ACTION_ADD_GZIPPED}" ]
+  [ "${file}" = "file_name.txt" ]
+  [ "${remove_files}" -eq 1 ]
+}
+
 # ==================
 #  Unarchive option
 # ==================
