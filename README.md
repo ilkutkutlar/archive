@@ -15,7 +15,7 @@ It is essentially a specialised interface to the tool `tar`. Instead of the user
 Clone repository
 
 ```sh
-git clone https://github.com/ilkutkutlar/archive.git
+git clone https://github.com/ilkutkutlar/archive.sh.git
 ```
 
 then run the `install.sh` script in project root directory. It will install files in `/usr/local` by default, but you can specify another directory as well - just make sure the `bin` directory in custom install directory is in your PATH.
